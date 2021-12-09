@@ -5,13 +5,14 @@ BUILD_TIME?=$(shell powershell get-date -format "{yyyy-mm-dd_HH:mm:ss}")
 PROJECT?=github.com/Jarover/qsm
 
 clean:
-	rm -f cmd/${APP}/${APP}
-	rm -f cmd/${APP}/${APP}.exe
+	rm -f ${APP}
+	rm -f ${APP}.exe
 
 
 buildwin: clean
 	python version.py inc-patch
 	GOOS=windows go build \
+				-o ${APP}.exe \
                 -ldflags "-s -w -X ${PROJECT}/version.Release=${RELEASE} \
                 -X ${PROJECT}/version.Commit=${COMMIT} -X ${PROJECT}/version.BuildTime=${BUILD_TIME}" \
                 cmd/${APP}/main.go
@@ -20,6 +21,7 @@ buildwin: clean
 buildlinux:	
 	rm -f ${APP} 
 	GOOS=linux go build \
+				-o ${APP} \
                 -ldflags "-s -w -X ${PROJECT}/version.Release=${RELEASE} \
                 -X ${PROJECT}/version.Commit=${COMMIT} -X ${PROJECT}/version.BuildTime=${BUILD_TIME}" \
 				$(go list -m)/cmd/${APP}
