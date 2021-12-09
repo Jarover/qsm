@@ -1,3 +1,3 @@
-module gitbub.com/Jarover/qsm
+module github.com/Jarover/qsm
 
 go 1.16
