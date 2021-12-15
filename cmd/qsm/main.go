@@ -11,6 +11,10 @@ import (
 	"github.com/Jarover/qsm/cmd/qsm/routes"
 	"github.com/Jarover/qsm/pkg/utils"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	"database/sql"
+
+	_ "github.com/godror/godror"
 )
 
 // Читаем флаги и окружение
@@ -47,6 +51,7 @@ func getConfig(dir string) (*config.Config, error) {
 func main() {
 
 	start := time.Now()
+
 	dir := utils.GetDir()
 
 	logPath := dir + "/" + utils.GetBaseFile() + "_app.log"
@@ -60,12 +65,14 @@ func main() {
 	}
 	log.SetOutput(l)
 	log.Println("Start program")
+	log.Println(dir)
 
 	err := config.Version.ReadVersionFile(dir + "/version.json")
 	if err != nil {
 		log.Println(err)
 		return
 	}
+
 	log.Println(config.Version)
 
 	Config, err := getConfig(dir)
@@ -75,6 +82,15 @@ func main() {
 		log.Println(err)
 		return
 	}
+
+	log.Println(sql.Drivers())
+
+	db, err := sql.Open("godror", `user="sysadm" password="sysadm" connectString="xeon2vm:1521/neva"`)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer db.Close()
 
 	r := routes.SetupRouter()
 

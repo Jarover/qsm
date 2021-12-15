@@ -13,20 +13,20 @@ buildwin: clean
 	python version.py inc-patch
 	GOOS=windows go build \
 				-o ${APP}.exe \
-                -ldflags "-s -w -X ${PROJECT}/version.Release=${RELEASE} \
-                -X ${PROJECT}/version.Commit=${COMMIT} -X ${PROJECT}/version.BuildTime=${BUILD_TIME}" \
+                -ldflags "-s -w -X ${PROJECT}/cmd/qsm/config/version.Release=${RELEASE} \
+                -X ${PROJECT}/cmd/qsm/config/version.Commit=${COMMIT} -X ${PROJECT}/version.BuildTime=${BUILD_TIME}" \
                 cmd/${APP}/main.go
 
 
-buildlinux:	
-	rm -f ${APP} 
+buildlinux:	clean
+	python version.py inc-patch
 	GOOS=linux go build \
 				-o ${APP} \
                 -ldflags "-s -w -X ${PROJECT}/version.Release=${RELEASE} \
                 -X ${PROJECT}/version.Commit=${COMMIT} -X ${PROJECT}/version.BuildTime=${BUILD_TIME}" \
-				$(go list -m)/cmd/${APP}
+				cmd/${APP}/main.go
 
-deploy: build
+deploy: buildlinux
 	./deploy.sh
 
 run:	build
